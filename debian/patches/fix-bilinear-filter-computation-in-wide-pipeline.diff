@@ -1,0 +1,72 @@
+Description: Fix bilinear filter computation in wide pipeline
+ The recently introduced wide pipeline for filters has a typo which
+ causes it to improperly compute bilinear interpolation positions,
+ causing various glitches when enabled.
+ .
+ This patch uses the proper computation for bilinear interpolation in the
+ wide pipeline.  It also makes related `if` statements conformant to the
+ CODING_STYLE.
+Origin: upstream, https://gitlab.freedesktop.org/pixman/pixman/-/commit/8256c235
+Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/+source/pixman/+bug/1988796
+Author: Basile Clement <basile-pixman@clement.pm>
+Last-Update: 2022-10-11
+Applied-Upstream: 0.40.0
+
+diff --git a/pixman/pixman-bits-image.c b/pixman/pixman-bits-image.c
+index 564789e..7bc2ba8 100644
+--- a/pixman/pixman-bits-image.c
++++ b/pixman/pixman-bits-image.c
+@@ -432,29 +432,38 @@ bits_image_fetch_pixel_filtered (bits_image_t  *image,
+ 
+     case PIXMAN_FILTER_CONVOLUTION:
+ 	if (wide)
++	{
+ 	    bits_image_fetch_pixel_convolution (image, x, y,
+ 						get_pixel, out,
+ 						accum_float,
+ 						reduce_float);
++	}
+ 	else
++	{
+ 	    bits_image_fetch_pixel_convolution (image, x, y,
+ 						get_pixel, out,
+ 						accum_32, reduce_32);
++	}
+ 	break;
+ 
+     case PIXMAN_FILTER_SEPARABLE_CONVOLUTION:
+ 	if (wide)
++	{
+ 	    bits_image_fetch_pixel_separable_convolution (image, x, y,
+ 							  get_pixel, out,
+ 							  accum_float,
+ 							  reduce_float);
++	}
+ 	else
++	{
+ 	    bits_image_fetch_pixel_separable_convolution (image, x, y,
+ 							  get_pixel, out,
+ 							  accum_32, reduce_32);
++	}
+         break;
+ 
+     default:
++	assert (0);
+         break;
+     }
+ }
+diff --git a/pixman/pixman-inlines.h b/pixman/pixman-inlines.h
+index 332e208..f785910 100644
+--- a/pixman/pixman-inlines.h
++++ b/pixman/pixman-inlines.h
+@@ -231,7 +231,7 @@ bilinear_interpolation_float (argb_t tl, argb_t tr,
+     argb_t r;
+ 
+     distxy = distx * disty;
+-    distxiy = distx - (1.f - distxy);
++    distxiy = distx * (1.f - disty);
+     distixy = (1.f - distx) * disty;
+     distixiy = (1.f - distx) * (1.f - disty);
+ 
+-- 
+2.37.1

@@ -1,1 +1,3 @@
 test-increase-timeout.diff
+fix-bilinear-filter-computation-in-wide-pipeline.diff
+CVE-2022-44638.patch

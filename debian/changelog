@@ -1,3 +1,18 @@
+pixman (0.38.4-0ubuntu2.1) focal-security; urgency=medium
+
+  * SECURITY UPDATE: OOB write in in rasterize_edges_8
+    - debian/patches/CVE-2022-44638.patch: avoid integer overflow leading
+      to out-of-bounds write in pixman/pixman-trap.c.
+    - CVE-2022-44638
+
+ -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Fri, 04 Nov 2022 11:09:39 -0400
+
+pixman (0.38.4-0ubuntu2) focal; urgency=medium
+
+  * Fix bilinear filter computation in wide pipeline. (LP: #1988796)
+
+ -- Benjamin Gilbert <bgilbert@backtick.net>  Wed, 12 Oct 2022 00:01:37 -0400
+
 pixman (0.38.4-0ubuntu1) eoan; urgency=medium
 
   * New upstream version
